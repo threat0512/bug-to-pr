@@ -1,0 +1,7 @@
+# HTTP framework
+fastapi==0.104.1
+uvicorn==0.24.0
+
+# Data validation & config
+pydantic
+python-dotenv==1.0.0
