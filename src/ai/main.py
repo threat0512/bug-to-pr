@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Dict, List
 from agent import generate_pr_plan
+import os
 
 app = FastAPI()
 
@@ -68,3 +69,12 @@ def generate(request: IssueRequest):
 
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+
+if __name__ == "__main__":
+    import uvicorn
+    
+    host = os.getenv("AI_SERVICE_HOST", "0.0.0.0")
+    port = int(os.getenv("AI_SERVICE_PORT", "8000"))
+    
+    uvicorn.run(app, host=host, port=port)

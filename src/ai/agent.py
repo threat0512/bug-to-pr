@@ -8,9 +8,25 @@ from langchain.prompts.chat import (
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
+from pydantic_settings import BaseSettings
 
-# Load environment variables
-load_dotenv()
+# Get the root directory (3 levels up from src/ai/)
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+class Settings(BaseSettings):
+    groq_api_key: str
+    groq_model: str
+    groq_temperature: float
+
+    class Config:
+        env_file = os.path.join(ROOT_DIR, ".env")
+        extra = "ignore"  # Ignore extra fields in .env file
+
+settings = Settings()
+
+# Load environment variables from root .env file
+load_dotenv(os.path.join(ROOT_DIR, ".env"))
+
 # System-level instructions with escaped curly braces for literal JSON schema
 SYSTEM_INSTRUCTIONS = r"""
 You are a meticulous senior software engineer. Given a GitHub issue title and body, generate a structured pull request plan:
@@ -54,9 +70,9 @@ Please respond with ONLY the JSON object containing keys:
 
 
 llm = ChatGroq(
-    groq_api_key=os.getenv("GROQ_API_KEY"),
-    model="deepseek-r1-distill-llama-70b",
-    temperature=0.3,
+    groq_api_key=settings.groq_api_key,
+    model=settings.groq_model,
+    temperature=settings.groq_temperature,
 )
 
 
