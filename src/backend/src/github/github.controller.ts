@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
 import { GithubService } from './github.service';
 import { GithubIssue } from './interfaces/github-issue.interface';
 
@@ -7,12 +7,12 @@ export class GithubController {
     constructor(private readonly githubService: GithubService) { }
 
     @Post('get-issue')
-    async getIssue(@Body('url') url: string): Promise<GithubIssue> {
-        const parsedUrl = this.githubService.parseGithubUrl(url);
-
-        if (!parsedUrl) {
-            throw new Error('Invalid GitHub issue URL');
+    async getIssue(@Body() body: { url: string }): Promise<GithubIssue> {
+        if (!body.url) {
+            throw new BadRequestException('URL is required');
         }
+
+        const parsedUrl = this.githubService.parseGithubUrl(body.url);
 
         return this.githubService.getIssue(
             parsedUrl.owner,
