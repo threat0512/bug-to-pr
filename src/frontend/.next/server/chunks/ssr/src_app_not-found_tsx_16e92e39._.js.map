@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/personal/Desktop/projects/bug-to-pr/src/frontend/src/app/not-found.tsx"],"sourcesContent":["export default function NotFound() {\n    return (\n        <div style={{ textAlign: \"center\", marginTop: \"10vh\" }}>\n            <h1>404 - Page Not Found</h1>\n            <p>The page you are looking for does not exist.</p>\n        </div>\n    );\n} "],"names":[],"mappings":";;;;;AAAe,SAAS;IACpB,qBACI,8OAAC;QAAI,OAAO;YAAE,WAAW;YAAU,WAAW;QAAO;;0BACjD,8OAAC;0BAAG;;;;;;0BACJ,8OAAC;0BAAE;;;;;;;;;;;;AAGf","debugId":null}}]
+}

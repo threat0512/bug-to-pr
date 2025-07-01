@@ -1,0 +1,3 @@
+{
+  "/api/generate-pr-plan/route": "app/api/generate-pr-plan/route.js"
+}
