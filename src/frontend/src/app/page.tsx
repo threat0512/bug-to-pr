@@ -1,7 +1,7 @@
-import Demo from "@/components/landing-page/Demo";
-import Footer from "@/components/landing-page/Footer";
-import Hero from "@/components/landing-page/Hero";
-import ProcessFlow from "@/components/landing-page/Process-Flow";
+import Demo from "@/features/landing/Demo";
+import Footer from "@/features/landing/Footer";
+import Hero from "@/features/landing/Hero";
+import ProcessFlow from "@/features/landing/ProcessFlow";
 
 
 export default function Page() {

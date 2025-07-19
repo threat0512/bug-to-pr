@@ -1,10 +1,11 @@
 # HTTP framework
-fastapi==0.104.1
-uvicorn==0.24.0
+fastapi
+uvicorn
 
 # Data validation & config
 pydantic
-python-dotenv==1.0.0
+pydantic_settings
+python-dotenv
 
 # LLM and prompt engineering
 langchain

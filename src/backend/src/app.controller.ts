@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AppService } from './app.service';
+import { GeneratePrPlanDto } from './dto/generate-pr-plan.dto';
 
 interface PRPlanResponse {
   pr_title: string;
@@ -10,7 +11,7 @@ interface PRPlanResponse {
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) { }
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   getHello(): string {
@@ -18,7 +19,7 @@ export class AppController {
   }
 
   @Post('generate-pr-plan')
-  async generatePRPlan(@Body() body: { url: string }): Promise<PRPlanResponse> {
+  async generatePRPlan(@Body() body: GeneratePrPlanDto): Promise<PRPlanResponse> {
     return this.appService.generatePRPlanFromUrl(body.url);
   }
 }
