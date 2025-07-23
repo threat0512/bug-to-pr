@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useSearchParams, useRouter } from "next/navigation";
 import { PRPlanResult } from "@/types/pr-plan";
 
-export default function PRPlanResults() {
+function PRPlanResultsContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +28,7 @@ export default function PRPlanResults() {
             try {
                 const parsedResult = JSON.parse(stored);
                 setResult(parsedResult);
-            } catch (err) {
+            } catch {
                 setError("Failed to load saved result");
             }
         }
@@ -40,7 +40,7 @@ export default function PRPlanResults() {
         try {
             await navigator.clipboard.writeText(text);
             toast("Code snippet copied successfully");
-        } catch (err) {
+        } catch {
             toast("Failed to copy to clipboard");
         }
     };
@@ -57,7 +57,7 @@ export default function PRPlanResults() {
                 .join('\n\n');
             await navigator.clipboard.writeText(allCode);
             toast("All code snippets have been copied to clipboard");
-        } catch (err) {
+        } catch {
             toast("Failed to copy code snippets");
         }
     };
@@ -214,4 +214,26 @@ export default function PRPlanResults() {
             </div>
         </div>
     );
-} 
+}
+
+// Loading fallback component
+function LoadingFallback() {
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Loading Results</h2>
+                <p className="text-gray-600">Please wait while we load your PR plan...</p>
+            </div>
+        </div>
+    );
+}
+
+// Main component with Suspense boundary
+export default function PRPlanResults() {
+    return (
+        <Suspense fallback={<LoadingFallback />}>
+            <PRPlanResultsContent />
+        </Suspense>
+    );
+}

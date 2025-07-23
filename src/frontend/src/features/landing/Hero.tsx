@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Github, Zap } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 
 const Hero = () => {
   const scrollToDemo = () => {

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Github, X, Heart, Mail } from "lucide-react";
+import { Github, Heart, Mail } from "lucide-react";
 
 const Footer = () => {
   const handleEmailClick = () => {
@@ -12,7 +12,7 @@ const Footer = () => {
     
     try {
       window.open(mailtoLink, '_blank');
-    } catch (error) {
+    } catch {
       // Fallback: copy email to clipboard
       navigator.clipboard.writeText(email).then(() => {
         alert('Email copied to clipboard: ' + email);
