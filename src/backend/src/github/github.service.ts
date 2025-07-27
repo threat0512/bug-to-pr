@@ -53,7 +53,9 @@ export class GithubService {
   constructor(private readonly httpService: HttpService) {
     // Create octokit without authentication for public repos
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-    this.octokit = new Octokit();
+    this.octokit = new Octokit({
+      auth: process.env.GITHUB_TOKEN,
+    });
   }
 
   parseGithubUrl(url: string): { owner: string; repo: string; issue_number: number } {
