@@ -97,18 +97,18 @@ export async function POST(request: NextRequest) {
       }
 
       return NextResponse.json(data);
-    } catch (fetchError: any) {
+    } catch (fetchError: unknown) {
       clearTimeout(timeoutId);
       
       // Handle specific fetch errors
-      if (fetchError.name === 'AbortError') {
+      if (fetchError instanceof Error && fetchError.name === 'AbortError') {
         return NextResponse.json(
           { error: 'Request timed out - the issue might be too complex. Please try again.' },
           { status: 408 }
         );
       }
       
-      if (fetchError.code === 'ECONNREFUSED') {
+      if (fetchError && typeof fetchError === 'object' && 'code' in fetchError && fetchError.code === 'ECONNREFUSED') {
         return NextResponse.json(
           { error: 'AI service is not available - please try again later' },
           { status: 503 }
@@ -118,11 +118,11 @@ export async function POST(request: NextRequest) {
       throw fetchError; // Re-throw to be caught by outer catch
     }
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('API Error:', error);
     
     // Handle different types of errors
-    if (error.name === 'SyntaxError' && error.message.includes('JSON')) {
+    if (error instanceof Error && error.name === 'SyntaxError' && error.message.includes('JSON')) {
       return NextResponse.json(
         { error: 'Invalid request format' },
         { status: 400 }

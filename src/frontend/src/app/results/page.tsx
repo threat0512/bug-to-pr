@@ -140,13 +140,13 @@ function PRPlanResultsContent() {
 
             setResult(newResult);
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Regeneration error:", err);
             let errorMessage = "Failed to regenerate PR plan";
             
-            if (err.name === 'AbortError') {
+            if (err instanceof Error && err.name === 'AbortError') {
                 errorMessage = "Regeneration timed out - please try again";
-            } else if (err.message) {
+            } else if (err instanceof Error && err.message) {
                 errorMessage = err.message;
             }
             
@@ -397,7 +397,7 @@ function PRPlanResultsContent() {
                                             <p className="text-sm mb-2">{result.warning}</p>
                                             {result.should_retry && (
                                                 <p className="text-sm font-medium">
-                                                    Click "Regenerate" above to try again for a complete result.
+                                                    Click &quot;Regenerate&quot; above to try again for a complete result.
                                                 </p>
                                             )}
                                         </div>

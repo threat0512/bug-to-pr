@@ -32,14 +32,14 @@ const Demo = () => {
         return { isValid: true };
     };
 
-    const getErrorMessage = (error: any, response?: Response): string => {
+    const getErrorMessage = (error: unknown, response?: Response): string => {
         // Handle network errors
-        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        if (error instanceof Error && error.name === 'TypeError' && error.message.includes('fetch')) {
             return "Network error - please check your connection and try again";
         }
 
         // Handle timeout errors
-        if (error.name === 'AbortError' || error.message.includes('timeout')) {
+        if (error instanceof Error && (error.name === 'AbortError' || error.message.includes('timeout'))) {
             return "Request timed out - the issue might be too complex. Please try again.";
         }
 
@@ -68,7 +68,7 @@ const Demo = () => {
         }
 
         // Handle known error messages
-        if (error.message) {
+        if (error instanceof Error && error.message) {
             if (error.message.includes('JSON')) {
                 return "AI response formatting error - please try again";
             }
@@ -139,7 +139,7 @@ const Demo = () => {
             localStorage.setItem("prPlanResult", JSON.stringify(result));
             localStorage.setItem("prPlanStatus", "success");
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Analysis error:", err);
             const errorMessage = getErrorMessage(err);
             
