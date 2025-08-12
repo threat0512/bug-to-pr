@@ -7,7 +7,17 @@ pydantic
 pydantic_settings
 python-dotenv
 
+# HTTP requests
+requests
+
 # LLM and prompt engineering
 langchain
 langchain_groq
 groq
+
+# HuggingFace transformers for local inference
+transformers>=4.35.0
+torch>=2.0.0
+accelerate>=0.20.0
+bitsandbytes>=0.41.0  # For quantization support
+sentencepiece  # For tokenizer support

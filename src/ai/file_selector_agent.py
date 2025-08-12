@@ -2,27 +2,15 @@ import os
 import json
 import re
 from dotenv import load_dotenv
-from langchain_groq.chat_models import ChatGroq
 from langchain.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
-from pydantic_settings import BaseSettings
+from providers.factory import generate_with_fallback
 
 # Get the root directory (3 levels up from src/ai/)
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-class Settings(BaseSettings):
-    groq_api_key: str
-    groq_model: str
-    groq_temperature: float
-
-    class Config:
-        env_file = os.path.join(ROOT_DIR, ".env")
-        extra = "ignore"
-
-settings = Settings()
 
 # Load environment variables from root .env file
 load_dotenv(os.path.join(ROOT_DIR, ".env"))
@@ -76,11 +64,7 @@ Please respond with ONLY the JSON object containing:
     ]
 )
 
-llm = ChatGroq(
-    groq_api_key=settings.groq_api_key,
-    model=settings.groq_model,
-    temperature=settings.groq_temperature,
-)
+# LLM provider is now handled by the factory
 
 def filter_relevant_files(file_tree: list, title: str, body: str) -> list:
     """
@@ -149,12 +133,23 @@ def select_relevant_files(title: str, body: str, file_tree: list) -> dict:
     file_tree_str = "\n".join(formatted_tree)
     
     try:
-        response = (file_selector_prompt | llm).invoke({
-            "title": title, 
-            "body": body, 
-            "file_tree": file_tree_str
-        })
-        raw = response.content.strip()
+        # Format the prompt using the template
+        formatted_prompt = file_selector_prompt.format_messages(
+            title=title, 
+            body=body, 
+            file_tree=file_tree_str
+        )
+        
+        # Convert to single string prompt for provider
+        prompt_text = ""
+        for message in formatted_prompt:
+            if hasattr(message, 'content'):
+                prompt_text += message.content + "\n\n"
+            else:
+                prompt_text += str(message) + "\n\n"
+        
+        # Generate using provider abstraction
+        raw = generate_with_fallback(prompt_text.strip())
 
         # Debug raw output
         print("--- RAW FILE SELECTOR RESPONSE ---")

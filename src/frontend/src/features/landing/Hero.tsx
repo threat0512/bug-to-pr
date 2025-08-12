@@ -1,7 +1,8 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight, Github, Zap } from "lucide-react";
+import Logo from "@/components/ui/logo";
 
 const Hero = () => {
   const scrollToDemo = () => {
@@ -28,8 +29,13 @@ const Hero = () => {
             AI-Powered Development Planning
           </div>
 
+          {/* Logo and Brand */}
+          <div className="mb-6">
+            <Logo size="lg" />
+          </div>
+
           {/* Main headline */}
-          <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-6 leading-tight">
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-6 leading-tight">
             Transform GitHub Issues into
             <span className="block text-blue-600">Structured PR Plans</span>
           </h1>
@@ -45,10 +51,10 @@ const Hero = () => {
               Try It Now
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
-            {/* <Button variant="outline" size="lg" className="px-8 py-4 text-lg font-semibold rounded-xl border-2 hover:bg-gray-50 transition-all duration-200 group">
+            <Button variant="outline" size="lg" className="px-8 py-4 text-lg font-semibold rounded-xl border-2 hover:bg-gray-50 transition-all duration-200 group">
               <Github className="mr-2 w-5 h-5" />
-              View on GitHub <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button> */}
+              <a href="https://github.com/threat0512/bug-to-pr" target="_blank" rel="noopener noreferrer">View on GitHub</a> <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
 
           {/* Stats

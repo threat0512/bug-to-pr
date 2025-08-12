@@ -104,7 +104,8 @@ Transform GitHub issues into structured development plans with AI-powered analys
 ## Features
 
 - **GitHub Issue Analysis**: Paste any GitHub issue URL and get instant analysis
-- **AI-Powered Planning**: Generate comprehensive PR plans with commit strategies using Groq AI
+- **AI-Powered Planning**: Generate comprehensive PR plans with commit strategies using multiple AI providers
+- **Multiple LLM Providers**: Support for Groq and HuggingFace Transformers (local inference) with automatic fallback
 - **Code Snippets**: Get ready-to-use code snippets for implementation
 - **File Recommendations**: See which files need to be modified
 - **Modern UI**: Beautiful, responsive interface built with Next.js and Tailwind CSS
@@ -124,7 +125,8 @@ Transform GitHub issues into structured development plans with AI-powered analys
 - **Error Handling**: Proper HTTP status codes and error messages
 
 ### AI Service (Python FastAPI)
-- **Groq AI Integration**: Uses Groq's deepseek-r1-distill-llama-70b model
+- **Multiple LLM Providers**: Supports Groq and HuggingFace Transformers (local inference)
+- **Provider Abstraction**: Clean interface with automatic fallback between providers
 - **Structured Output**: Generates JSON-formatted PR plans
 - **LangChain**: Advanced prompt engineering and response parsing
 
@@ -149,7 +151,14 @@ start-services.bat
 - Node.js 18+
 - Python 3.8+
 - pnpm (recommended) or npm
-- Groq API key
+- AI Provider API key (Groq) OR sufficient hardware for local inference (HuggingFace)
+
+#### Hardware Requirements for HuggingFace Transformers
+- **Minimum**: 8GB RAM (CPU inference)
+- **Recommended**: 6GB+ GPU VRAM with CUDA (with quantization)
+- **Optimal**: 12GB+ GPU VRAM (without quantization)
+
+The system automatically detects your hardware and optimizes accordingly.
 
 #### Environment Setup
 
@@ -158,14 +167,28 @@ start-services.bat
    cp env.example .env
    ```
 
-2. **Get a Groq API Key**:
+2. **Choose and Configure AI Provider**:
+
+   **Option A: HuggingFace Transformers (Default - Local inference, no API key required)**:
+   ```bash
+   # Edit .env file
+   AI_PROVIDER=hf_transformers
+   # Model will be downloaded automatically on first use
+   ```
+
+   **Option B: Groq (Requires API key)**:
    - Sign up at [groq.com](https://groq.com)
    - Get your API key from the dashboard
-
-3. **Configure environment variables**:
    ```bash
-   # Edit .env file and set your API key
+   # Edit .env file
+   AI_PROVIDER=groq
    GROQ_API_KEY=your_groq_api_key_here
+   ```
+
+3. **Optional: Improve HuggingFace Rate Limits**:
+   ```bash
+   # For better HF rate limits, add your HuggingFace token
+   HF_API_KEY=your_huggingface_token_here
    ```
 
 #### Start Services
@@ -204,8 +227,9 @@ The application uses a single `.env` file in the root directory for all environm
 # Copy and configure the example file
 cp env.example .env
 
-# Edit .env with your values
-GROQ_API_KEY=your_groq_api_key_here
+# Edit .env with your values (HuggingFace Transformers is default)
+AI_PROVIDER=hf_transformers  # or 'groq'
+# GROQ_API_KEY=your_groq_api_key_here  # Only needed if AI_PROVIDER=groq
 AI_SERVICE_URL=http://localhost:8000
 BACKEND_URL=http://localhost:3001
 FRONTEND_URL=http://localhost:3000
@@ -214,7 +238,8 @@ FRONTEND_URL=http://localhost:3000
 #### Production Deployment
 ```bash
 # Update .env for production
-GROQ_API_KEY=your_groq_api_key_here
+AI_PROVIDER=hf_transformers  # or 'groq'
+# GROQ_API_KEY=your_groq_api_key_here  # Only needed if AI_PROVIDER=groq
 AI_SERVICE_URL=https://your-ai-service-domain.com
 BACKEND_URL=https://your-backend-domain.com
 FRONTEND_URL=https://your-frontend-domain.com
@@ -274,7 +299,13 @@ Create separate deployments for each service with ConfigMap for environment vari
 
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
-| `GROQ_API_KEY` | Groq AI API key | - | Yes |
+| `AI_PROVIDER` | LLM provider (`groq` \| `hf_transformers`) | `groq` | No |
+| `GROQ_API_KEY` | Groq AI API key | - | Yes (if using Groq) |
+| `HF_MODEL_ID` | HuggingFace model ID | `deepseek-ai/deepseek-coder-6.7b-instruct` | No |
+| `HF_MAX_NEW_TOKENS` | HF max tokens | `512` | No |
+| `HF_TEMPERATURE` | HF temperature | `0.2` | No |
+| `HF_USE_QUANTIZATION` | Use 4-bit quantization | `true` | No |
+| `HF_CACHE_DIR` | Model cache directory | - | No |
 | `AI_SERVICE_URL` | Python AI service URL | `http://localhost:8000` | Yes |
 | `BACKEND_URL` | NestJS backend URL | `http://localhost:3001` | Yes |
 | `FRONTEND_URL` | Next.js frontend URL | `http://localhost:3000` | No |
@@ -306,17 +337,25 @@ Create separate deployments for each service with ConfigMap for environment vari
 
 ## Development
 
-### AI Model Configuration
+### AI Provider Configuration
 
-The AI service uses Groq's `deepseek-r1-distill-llama-70b` model. You can modify the model or parameters in `src/ai/agent.py`:
+The AI service supports multiple providers with automatic fallback:
 
-```python
-llm = ChatGroq(
-    groq_api_key=os.getenv("GROQ_API_KEY"),
-    model="deepseek-r1-distill-llama-70b",  # Change model here
-    temperature=0.3,  # Adjust creativity (0.0-1.0)
-)
-```
+#### HuggingFace Transformers (Default)
+- **Model**: `deepseek-ai/deepseek-coder-6.7b-instruct`
+- **Local inference** - model runs on your hardware
+- **No API key required**
+- **Automatic quantization** for GPU memory efficiency
+
+#### Groq Provider
+- **Model**: `deepseek-r1-distill-llama-70b` 
+- **Requires GROQ_API_KEY**
+
+#### Switching Providers
+Set `AI_PROVIDER=hf_transformers` or `AI_PROVIDER=groq` in your `.env` file.
+
+#### Provider Fallback
+If the primary provider fails, the system automatically attempts to use a fallback provider (HuggingFace Transformers → Groq).
 
 ### Customizing AI Prompts
 
@@ -348,7 +387,9 @@ Important:
 
 1. **AI Service Not Running**:
    - Ensure Python virtual environment is activated
-   - Check that GROQ_API_KEY is set in `.env`
+   - Check AI provider configuration in `.env`
+   - For Groq: Ensure GROQ_API_KEY is set
+   - For HuggingFace: No key required, model runs locally
    - Verify uvicorn is running on port 8000
 
 2. **Backend Connection Errors**:

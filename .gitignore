@@ -45,6 +45,10 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
+# Always include env.example
+!env.example
+!.env.example
+
 # temp directory
 .temp
 .tmp
@@ -87,7 +91,6 @@ wheels/
 venv/
 env/
 ENV/
-.env
 
 # IDE
 .idea/
