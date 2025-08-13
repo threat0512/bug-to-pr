@@ -6,6 +6,7 @@ from typing import Optional
 from .base import LLMProvider
 from .groq_provider import GroqProvider
 from .hf_public_provider import HuggingFaceInferenceAPIProvider
+from .openai_provider import OpenAIProvider
 
 
 class ProviderFactory:
@@ -29,11 +30,13 @@ class ProviderFactory:
         
         if provider_name == "groq":
             return GroqProvider()
+        elif provider_name == "openai":
+            return OpenAIProvider()
         elif provider_name == "hf_inference_api" or provider_name == "hf_public" or provider_name == "hf_providers":
             # Support multiple names for backward compatibility
             return HuggingFaceInferenceAPIProvider()
         else:
-            raise ValueError(f"Unsupported provider: {provider_name}. Supported: groq, hf_inference_api, hf_providers")
+            raise ValueError(f"Unsupported provider: {provider_name}. Supported: groq, openai, hf_inference_api, hf_providers")
     
     @staticmethod
     def create_fallback_provider(primary_provider: str) -> Optional[LLMProvider]:
@@ -50,6 +53,7 @@ class ProviderFactory:
         fallback_map = {
             "hf_inference_api": "groq",
             "hf_public": "groq",  # Backward compatibility
+            "openai": "groq",  # Fallback to Groq if OpenAI fails
             "groq": None,  # No fallback for Groq currently
         }
         

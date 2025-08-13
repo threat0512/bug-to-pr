@@ -35,7 +35,7 @@ As a developer, you've probably experienced:
 ## ✨ **Key Features**
 
 ### 🤖 **AI-Powered Analysis**
-- **Multiple LLM Providers**: Support for HuggingFace Inference API and Groq with automatic fallback
+- **Multiple LLM Providers**: Support for HuggingFace Inference API, Groq, and OpenAI with automatic fallback
 - **Smart Issue Parsing**: Understands complex GitHub issues and generates appropriate solutions
 - **Context-Aware Planning**: Considers repository structure and issue context
 
@@ -100,6 +100,7 @@ BugToPR follows a **microservices architecture** with three main components:
 - **LLM Providers**:
   - **HuggingFace Inference API** (Default): No API key required, hosted inference
   - **Groq**: High-performance inference with API key
+  - **OpenAI**: High-quality GPT models with API key
 
 ## 🛠️ **Technical Decisions & Trade-offs**
 
@@ -178,7 +179,12 @@ The application uses a single `.env` file for configuration:
 
 ```bash
 # AI Provider (choose one)
-AI_PROVIDER=hf_inference_api  # or 'groq'
+AI_PROVIDER=openai  # Options: openai, groq, hf_inference_api
+
+# OpenAI (requires API key)
+OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_MODEL=gpt-4o-mini  # Default model
+OPENAI_TEMPERATURE=0.3    # Default temperature (0.0-1.0)
 
 # HuggingFace (default - no API key required)
 HF_MODEL_ID=Qwen/Qwen3-4B-Instruct-2507
@@ -186,6 +192,8 @@ HF_API_KEY=  # Optional: for better rate limits
 
 # Groq (requires API key)
 GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=deepseek-r1-distill-llama-70b  # Default model
+GROQ_TEMPERATURE=0.3                      # Default temperature (0.0-1.0)
 
 # Service URLs
 AI_SERVICE_URL=http://localhost:8000
@@ -199,6 +207,7 @@ FRONTEND_URL=http://localhost:3000
 |----------|------|------|----------|
 | **HuggingFace** | No API key, reliable, free tier | Rate limits, slower | Development, testing |
 | **Groq** | Fast, high quality, generous limits | Requires API key, cost | Production, high volume |
+| **OpenAI** | High quality, reliable, extensive model options | Requires API key, higher cost | Production, enterprise, GPT models |
 
 ## 📱 **Usage Examples**
 
