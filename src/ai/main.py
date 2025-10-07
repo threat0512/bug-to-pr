@@ -10,6 +10,10 @@ app.include_router(generate_router)
 def read_root():
     return {"Hello": "World"}
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 if __name__ == "__main__":
     import uvicorn
     host = os.getenv("AI_SERVICE_HOST", "0.0.0.0")

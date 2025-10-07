@@ -141,3 +141,7 @@ logs/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# misc
+
+repomix-output.xml

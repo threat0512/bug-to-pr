@@ -18,6 +18,11 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @Get('health')
+  health(): { status: string } {
+    return { status: 'ok' };
+  }
+
   @Post('generate-pr-plan')
   async generatePRPlan(@Body() body: GeneratePrPlanDto): Promise<PRPlanResponse> {
     return this.appService.generatePRPlanFromUrl(body.url);
