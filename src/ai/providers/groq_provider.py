@@ -4,7 +4,7 @@ Groq LLM Provider Implementation
 import os
 from typing import Optional
 from langchain_groq.chat_models import ChatGroq
-from langchain.prompts.chat import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from .base import LLMProvider
 
 

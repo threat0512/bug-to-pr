@@ -2,11 +2,8 @@ import os
 import json
 import re
 from dotenv import load_dotenv
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts.chat import SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from providers.factory import generate_with_fallback
 
 # Get the root directory (3 levels up from src/ai/)

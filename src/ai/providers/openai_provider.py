@@ -36,16 +36,21 @@ class OpenAIProvider(LLMProvider):
         # Use provided temperature or default
         temp = temperature if temperature is not None else self.default_temperature
         
+
+        api_params = {
+            "model": self.model,
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": temp,
+            **kwargs
+        }
+
+        if max_tokens is not None:
+            api_params["max_tokens"] = max_tokens
+        
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=temp,
-                max_tokens=max_tokens,
-                **kwargs
-            )
+            response = self.client.chat.completions.create(**api_params)
             
             return response.choices[0].message.content.strip()
             
